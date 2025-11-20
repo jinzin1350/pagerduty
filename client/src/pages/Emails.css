@@ -1,0 +1,76 @@
+.emails-page h1 {
+  margin-bottom: 30px;
+  color: #2c3e50;
+}
+
+.emails-container {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 20px;
+}
+
+.emails-list {
+  overflow-x: auto;
+}
+
+.email-details {
+  position: sticky;
+  top: 20px;
+}
+
+.email-details-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.email-details h2 {
+  margin: 0;
+  font-size: 20px;
+  color: #2c3e50;
+}
+
+.email-meta {
+  background: #f8f9fa;
+  padding: 15px;
+  border-radius: 4px;
+  margin-bottom: 20px;
+}
+
+.email-meta div {
+  margin-bottom: 8px;
+  font-size: 14px;
+}
+
+.email-meta div:last-child {
+  margin-bottom: 0;
+}
+
+.email-body {
+  margin-bottom: 20px;
+}
+
+.email-body h3 {
+  font-size: 16px;
+  margin-bottom: 10px;
+  color: #2c3e50;
+}
+
+.email-body p {
+  white-space: pre-wrap;
+  line-height: 1.6;
+  color: #333;
+}
+
+.email-calls h3 {
+  font-size: 16px;
+  margin-bottom: 10px;
+  color: #2c3e50;
+}
+
+@media (min-width: 1200px) {
+  .emails-container {
+    grid-template-columns: 1fr 500px;
+  }
+}

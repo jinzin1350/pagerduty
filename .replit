@@ -1,0 +1,12 @@
+run = "npm start"
+entrypoint = "server/index.js"
+
+[env]
+NODE_ENV = "production"
+
+[nix]
+channel = "stable-22_11"
+
+[deployment]
+run = ["npm", "run", "build"]
+deploymentTarget = "cloudrun"
