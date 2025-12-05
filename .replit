@@ -8,5 +8,5 @@ NODE_ENV = "production"
 channel = "stable-22_11"
 
 [deployment]
-run = ["npm", "run", "build"]
+run = ["sh", "-c", "cd client && npm run build && cd .. && npm start"]
 deploymentTarget = "cloudrun"
