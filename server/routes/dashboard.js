@@ -133,4 +133,43 @@ router.get('/timeline', authenticateUser, async (req, res) => {
   }
 });
 
+/**
+ * Toggle organization monitoring status
+ */
+router.post('/toggle-monitoring', authenticateUser, async (req, res) => {
+  try {
+    const { organization_id, role } = req.user;
+
+    // Only admins can toggle monitoring
+    if (role !== 'admin') {
+      return res.status(403).json({ error: 'Only admins can toggle monitoring' });
+    }
+
+    // Get current status
+    const { data: org } = await supabase
+      .from('organizations')
+      .select('is_active')
+      .eq('id', organization_id)
+      .single();
+
+    // Toggle status
+    const { data: updatedOrg, error } = await supabase
+      .from('organizations')
+      .update({ is_active: !org.is_active })
+      .eq('id', organization_id)
+      .select()
+      .single();
+
+    if (error) throw error;
+
+    res.json({
+      message: updatedOrg.is_active ? 'Monitoring resumed' : 'Monitoring paused',
+      is_active: updatedOrg.is_active
+    });
+  } catch (error) {
+    console.error('Toggle monitoring error:', error);
+    res.status(500).json({ error: 'Failed to toggle monitoring' });
+  }
+});
+
 module.exports = router;

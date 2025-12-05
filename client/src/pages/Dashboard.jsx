@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useAuth } from '../context/AuthContext';
 import api from '../services/api';
 import './Dashboard.css';
 
@@ -7,6 +8,11 @@ function Dashboard() {
   const [recentEmails, setRecentEmails] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const [monitoringActive, setMonitoringActive] = useState(true);
+  const [toggling, setToggling] = useState(false);
+
+  const { user } = useAuth();
+  const isAdmin = user?.role === 'admin';
 
   useEffect(() => {
     fetchDashboardData();
@@ -20,12 +26,26 @@ function Dashboard() {
       const response = await api.get('/dashboard/stats');
       setStats(response.data.stats);
       setRecentEmails(response.data.recentEmails);
+      setMonitoringActive(user?.organizations?.is_active !== false);
       setError('');
     } catch (err) {
       setError('Failed to load dashboard data');
       console.error(err);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const toggleMonitoring = async () => {
+    setToggling(true);
+    try {
+      const response = await api.post('/dashboard/toggle-monitoring');
+      setMonitoringActive(response.data.is_active);
+      setError('');
+    } catch (err) {
+      setError(err.response?.data?.error || 'Failed to toggle monitoring');
+    } finally {
+      setToggling(false);
     }
   };
 
@@ -39,7 +59,24 @@ function Dashboard() {
 
   return (
     <div className="dashboard">
-      <h1>Dashboard</h1>
+      <div className="page-header">
+        <h1>Dashboard</h1>
+        {isAdmin && (
+          <button
+            className={`btn ${monitoringActive ? 'btn-danger' : 'btn-success'}`}
+            onClick={toggleMonitoring}
+            disabled={toggling}
+          >
+            {toggling ? 'Updating...' : monitoringActive ? '⏸ Pause Monitoring' : '▶ Resume Monitoring'}
+          </button>
+        )}
+      </div>
+
+      {!monitoringActive && (
+        <div className="alert alert-warning" style={{ marginBottom: '20px' }}>
+          ⚠️ Monitoring is currently paused. No calls will be made for new emails.
+        </div>
+      )}
 
       <div className="stats-grid">
         <div className="stat-card">
